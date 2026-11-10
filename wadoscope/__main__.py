@@ -9,7 +9,7 @@ from __future__ import annotations
 import importlib
 import sys
 
-from wadoscope.version import BANNER
+from wadoscope import banner
 
 # command -> (module, one-line description)
 _RECON: dict[str, tuple[str, str]] = {
@@ -38,7 +38,7 @@ _ALL = {**_RECON, **_CHECKS}
 
 
 def _usage() -> None:
-    print(BANNER, file=sys.stderr)
+    banner.show()
     print("\nusage: python -m wadoscope <command> [options]\n", file=sys.stderr)
     print("dicomweb:", file=sys.stderr)
     for name, (_, desc) in _RECON.items():

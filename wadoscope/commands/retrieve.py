@@ -5,7 +5,7 @@ import argparse
 import sys
 
 import wadoscope.logger as logger
-from wadoscope.version import BANNER
+from wadoscope import banner
 from wadoscope import report
 from wadoscope.web.client import DicomWebClient
 from wadoscope.web import wado, qido
@@ -13,7 +13,7 @@ from wadoscope.commands._common import add_common_args, target_from_args, start_
 
 
 def main(argv: list[str] | None = None) -> None:
-    print(BANNER, file=sys.stderr)
+    banner.show()
     p = argparse.ArgumentParser(
         prog="wadoscope retrieve",
         description="WADO-RS: pull study/series metadata (read-only) or a full study.",

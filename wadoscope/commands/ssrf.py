@@ -6,7 +6,7 @@ import sys
 
 import wadoscope.logger as logger
 from wadoscope import report
-from wadoscope.version import BANNER
+from wadoscope import banner
 from wadoscope.web.client import DicomWebClient
 from wadoscope.checks.ssrf import (
     CallbackServer, check_ssrf, SINK_PARAMS, PROBE_PATHS, build_probes,
@@ -22,7 +22,7 @@ def _parse_listen(spec: str) -> tuple[str, int]:
 
 
 def main(argv: list[str] | None = None) -> None:
-    print(BANNER, file=sys.stderr)
+    banner.show()
     p = argparse.ArgumentParser(
         prog="wadoscope ssrf",
         description="Probe DICOMweb retrieve endpoints for SSRF by spraying "

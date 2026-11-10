@@ -9,14 +9,14 @@ import sys
 
 import wadoscope.logger as logger
 from wadoscope import report
-from wadoscope.version import BANNER
+from wadoscope import banner
 from wadoscope.web.client import DicomWebClient, SafeModeError
 from wadoscope.checks.xss import check_xss, DEFAULT_PAYLOAD, PAYLOADS, TAG_HEX
 from wadoscope.commands._common import add_common_args, target_from_args, start_logging
 
 
 def main(argv: list[str] | None = None) -> None:
-    print(BANNER, file=sys.stderr)
+    banner.show()
     p = argparse.ArgumentParser(
         prog="wadoscope xss",
         description="Store an instance whose free-text tags carry an XSS payload, "

@@ -24,6 +24,8 @@ def add_common_args(parser: argparse.ArgumentParser) -> None:
     log = parser.add_argument_group("logging")
     log.add_argument("-d", "--debug", action="store_true")
     log.add_argument("--ts", action="store_true", help="timestamps in log output")
+    log.add_argument("--no-banner", action="store_true",
+                     help="suppress the startup banner (also: WADOSCOPE_NO_BANNER=1)")
 
 
 def target_from_args(options) -> WebTarget:

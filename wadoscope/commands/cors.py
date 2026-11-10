@@ -5,14 +5,14 @@ import argparse
 import sys
 
 import wadoscope.logger as logger
-from wadoscope.version import BANNER
+from wadoscope import banner
 from wadoscope.web.client import DicomWebClient
 from wadoscope.checks.cors import check_cors, PROBE_ORIGIN
 from wadoscope.commands._common import add_common_args, target_from_args, start_logging
 
 
 def main(argv: list[str] | None = None) -> None:
-    print(BANNER, file=sys.stderr)
+    banner.show()
     p = argparse.ArgumentParser(
         prog="wadoscope cors",
         description="Probe the CORS policy with a foreign Origin.",

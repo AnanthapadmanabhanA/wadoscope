@@ -7,12 +7,12 @@ import argparse
 import sys
 
 import wadoscope.logger as logger
-from wadoscope.version import BANNER
+from wadoscope import banner
 from wadoscope.checks.discover import discover
 
 
 def main(argv: list[str] | None = None) -> None:
-    print(BANNER, file=sys.stderr)
+    banner.show()
     p = argparse.ArgumentParser(
         prog="wadoscope discover",
         description="Probe common DICOMweb base paths; fingerprint server/cloud; "
