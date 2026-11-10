@@ -1,6 +1,14 @@
-# wadoscope
+<p align="center">
+  <img src="docs/banner.png" alt="wadoscope — DICOMweb offensive toolkit" width="820">
+</p>
 
-**A DICOMweb offensive toolkit for authorized medical-imaging security testing.**
+<p align="center">
+  <b>A DICOMweb offensive toolkit for authorized medical-imaging security testing.</b>
+</p>
+
+<p align="center">
+  <code>discover · query · retrieve · store · cors · bola · ssrf · xss</code>
+</p>
 
 Hospitals increasingly expose imaging over **DICOMweb** - the HTTP/REST transport
 (QIDO-RS, WADO-RS, STOW-RS) - and the big cloud imaging services (Google Cloud
