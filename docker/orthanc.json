@@ -1,0 +1,16 @@
+{
+  "Name": "wadoscope-lab",
+  "RemoteAccessAllowed": true,
+  "AuthenticationEnabled": false,
+  "DicomServerEnabled": true,
+  "DicomAet": "DWEBLAB",
+  "DicomPort": 4242,
+  "HttpPort": 8042,
+  "DicomWeb": {
+    "Enable": true,
+    "Root": "/dicom-web/",
+    "EnableMetadata": true,
+    "StudiesMetadata": "Full",
+    "SeriesMetadata": "Full"
+  }
+}

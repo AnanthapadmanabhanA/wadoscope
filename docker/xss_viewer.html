@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>wadoscope XSS lab viewer</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px 16px;
+    font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: #0e1116; color: #d7dde5;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h1 .tag { color: #8b98a9; font-weight: 400; }
+  p.lead { color: #9aa6b4; margin: 0 0 20px; }
+  .card { background: #161b22; border: 1px solid #263040; border-radius: 10px; padding: 16px; margin: 14px 0; }
+  label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #8b98a9; margin-bottom: 6px; }
+  textarea, input {
+    width: 100%; background: #0b0e13; color: #d7dde5; border: 1px solid #2b3545;
+    border-radius: 7px; padding: 10px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px;
+  }
+  textarea { min-height: 150px; resize: vertical; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  button {
+    background: #1f6feb; color: #fff; border: 0; border-radius: 7px;
+    padding: 9px 14px; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  button.ghost { background: #21262d; color: #d7dde5; border: 1px solid #30363d; }
+  button:hover { filter: brightness(1.08); }
+  .viewer { margin-top: 14px; border: 1px dashed #30415c; border-radius: 8px; padding: 14px; background: #0b0e13; }
+  .viewer table { width: 100%; border-collapse: collapse; }
+  .viewer th { text-align: left; color: #8b98a9; font-size: 12px; width: 190px; padding: 4px 8px; vertical-align: top; }
+  .viewer td { padding: 4px 8px; border-bottom: 1px solid #1b2230; }
+  .mode { font-size: 13px; margin-top: 10px; }
+  .mode b.bad { color: #ff7b72; }
+  .mode b.good { color: #3fb950; }
+  .hint { color: #6e7b8c; font-size: 12px; margin-top: 8px; }
+  code { background: #0b0e13; border: 1px solid #263040; border-radius: 4px; padding: 1px 5px; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>wadoscope XSS lab viewer <span class="tag">— deliberately vulnerable</span></h1>
+  <p class="lead">
+    Paste the DICOM+JSON metadata a PACS returned (e.g.
+    <code>wadoscope retrieve &lt;base&gt; --study &lt;uid&gt; --mode metadata --format json</code>)
+    and watch what a viewer that renders tags as <b>HTML</b> does with a poisoned
+    <code>PatientName</code>. This file is a teaching target — do not ship this pattern.
+  </p>
+
+  <div class="card">
+    <label for="meta">WADO-RS / QIDO-RS metadata (DICOM+JSON array)</label>
+    <textarea id="meta" spellcheck="false"></textarea>
+    <div class="row">
+      <button id="naive">Render as a naive viewer (innerHTML)</button>
+      <button id="safe" class="ghost">Render safely (textContent)</button>
+    </div>
+    <div class="hint">
+      The “naive” button is the bug: it builds an HTML string from attacker-controlled
+      tag values. The “safe” button is the fix: the same values set via
+      <code>textContent</code> never execute.
+    </div>
+  </div>
+
+  <div class="card">
+    <div id="modeline" class="mode">No render yet.</div>
+    <div id="viewer" class="viewer"></div>
+  </div>
+</div>
+
+<script>
+  // DICOM+JSON keys this toy viewer surfaces.
+  const TAGS = [
+    ["00100010", "Patient Name", true],
+    ["00080090", "Referring Physician", true],
+    ["00081030", "Study Description", false],
+    ["0008103E", "Series Description", false],
+    ["00080080", "Institution", false],
+    ["00104000", "Patient Comments", false],
+  ];
+
+  // A ready-to-run example so the page demonstrates itself with no lab running.
+  const EXAMPLE = [{
+    "00100010": { "vr": "PN", "Value": [{ "Alphabetic": "<img src=x onerror=alert('xss: '+document.domain)>" }] },
+    "00081030": { "vr": "LO", "Value": ["CT CHEST W/O CONTRAST"] },
+    "00080080": { "vr": "LO", "Value": ["General Hospital"] }
+  }];
+  document.getElementById("meta").value = JSON.stringify(EXAMPLE, null, 2);
+
+  function readTag(obj, hex, isPN) {
+    const node = obj && obj[hex];
+    if (!node || !node.Value || !node.Value.length) return null;
+    let v = node.Value[0];
+    if (isPN && v && typeof v === "object") v = v.Alphabetic || "";
+    return String(v);
+  }
+
+  // Collapse the array into one {label: value} record (first object wins).
+  function collect(meta) {
+    const rec = [];
+    for (const [hex, label, isPN] of TAGS) {
+      let val = null;
+      for (const obj of meta) { const v = readTag(obj, hex, isPN); if (v !== null) { val = v; break; } }
+      if (val !== null) rec.push([label, val]);
+    }
+    return rec;
+  }
+
+  function parse() {
+    try { return JSON.parse(document.getElementById("meta").value); }
+    catch (e) { alert("Could not parse JSON: " + e.message); return null; }
+  }
+
+  function renderNaive() {
+    const meta = parse(); if (!meta) return;
+    const rec = collect(meta);
+    // THE VULNERABILITY: tag values concatenated into an HTML string.
+    let html = "<table>";
+    for (const [label, val] of rec) html += `<tr><th>${label}</th><td>${val}</td></tr>`;
+    html += "</table>";
+    document.getElementById("viewer").innerHTML = html;
+    document.getElementById("modeline").innerHTML =
+      'Rendered with <b class="bad">innerHTML</b> — a scripted tag executes here.';
+  }
+
+  function renderSafe() {
+    const meta = parse(); if (!meta) return;
+    const rec = collect(meta);
+    const table = document.createElement("table");
+    for (const [label, val] of rec) {
+      const tr = document.createElement("tr");
+      const th = document.createElement("th"); th.textContent = label;
+      const td = document.createElement("td"); td.textContent = val;   // the fix
+      tr.append(th, td); table.append(tr);
+    }
+    const host = document.getElementById("viewer");
+    host.textContent = ""; host.append(table);
+    document.getElementById("modeline").innerHTML =
+      'Rendered with <b class="good">textContent</b> — the same bytes render inert.';
+  }
+
+  document.getElementById("naive").addEventListener("click", renderNaive);
+  document.getElementById("safe").addEventListener("click", renderSafe);
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "Name": "wadoscope-lab-auth",
+  "RemoteAccessAllowed": true,
+  "AuthenticationEnabled": true,
+  "RegisteredUsers": {
+    "alice": "alicepass"
+  },
+  "DicomServerEnabled": true,
+  "DicomAet": "WADOLABAUTH",
+  "DicomPort": 4242,
+  "HttpPort": 8042,
+  "DicomWeb": {
+    "Enable": true,
+    "Root": "/dicom-web/",
+    "EnableMetadata": true,
+    "StudiesMetadata": "Full",
+    "SeriesMetadata": "Full"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "mode": "vulnerable",
+  "tokens": {
+    "alice-token": ["1.2.3.ALICE.STUDY"],
+    "bob-token":   ["1.2.3.BOB.STUDY"]
+  }
+}

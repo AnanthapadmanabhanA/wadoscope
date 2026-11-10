@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+# venvs / tooling
+.venv/
+venv/
+.pytest_cache/
+# local lab artifacts
+*.log
+authz.json
+*.multipart
