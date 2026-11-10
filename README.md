@@ -2,17 +2,17 @@
 
 **A DICOMweb offensive toolkit for authorized medical-imaging security testing.**
 
-Hospitals increasingly expose imaging over **DICOMweb** — the HTTP/REST transport
-(QIDO-RS, WADO-RS, STOW-RS) — and the big cloud imaging services (Google Cloud
+Hospitals increasingly expose imaging over **DICOMweb** - the HTTP/REST transport
+(QIDO-RS, WADO-RS, STOW-RS) - and the big cloud imaging services (Google Cloud
 Healthcare, Azure DICOM service, AWS HealthImaging) speak it natively. Classic
 pentest tooling is DIMSE-only and can't reach any of that. `wadoscope` is the
 DICOMweb counterpart: it enumerates, retrieves, injects, and runs the
-**web-layer checks that only exist over HTTP** — unauthenticated endpoints,
+**web-layer checks that only exist over HTTP** - unauthenticated endpoints,
 CORS misconfiguration, and BOLA/IDOR on UIDs-in-URLs.
 
 > For classic DIMSE (C-FIND / C-STORE / C-MOVE), use
 > [`dicomrecon`](https://pypi.org/project/dicomrecon/) or nmap's `dicom-*` NSE
-> scripts. `wadoscope` deliberately does **not** reimplement DIMSE — it owns the
+> scripts. `wadoscope` deliberately does **not** reimplement DIMSE - it owns the
 > DICOMweb layer.
 
 > ⚠️ **Authorized testing only.** Use this against systems you own or have
@@ -120,7 +120,7 @@ python -m wadoscope retrieve http://localhost:8042/dicom-web \
 ```
 
 > PatientName / ReferringPhysicianName are PN-VR, where `=` is a component
-> separator — an `onerror=` payload is truncated there. For those tags pass a
+> separator - an `onerror=` payload is truncated there. For those tags pass a
 > `=`-free payload, e.g. `--payload '<script>alert(document.domain)</script>'`.
 
 ## Quickstart
