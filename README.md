@@ -38,6 +38,32 @@ Requires Python 3.10+.
 
 ## Test lab (no real systems needed)
 
+### Quickest start — no Docker needed
+
+A single Python file serves a seeded DICOMweb target from pydicom's bundled
+sample images (no network, no Docker) — ideal on Windows:
+
+```bash
+pip install pydicom
+python docker/dicomweb_mock.py            # serves http://127.0.0.1:8042/dicom-web
+```
+
+Then, from another terminal:
+
+```bash
+python -m wadoscope discover http://127.0.0.1:8042
+python -m wadoscope query    http://127.0.0.1:8042/dicom-web --level studies
+python -m wadoscope xss      http://127.0.0.1:8042/dicom-web --unsafe
+# start the mock with --reflect-cors, then:
+python -m wadoscope cors     http://127.0.0.1:8042/dicom-web
+```
+
+`discover` reports the endpoint as **auth: NONE**, `query` lists the seeded PHI,
+and `xss` flags the tags stored unescaped. For the auth contrast and the
+per-object BOLA gateway, use the full Orthanc lab below.
+
+### Full Orthanc lab (Docker)
+
 Two Dockerized Orthanc targets, both intentionally insecure — **local use only**:
 
 | Service | Port | Auth | Use |

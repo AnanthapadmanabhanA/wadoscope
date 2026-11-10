@@ -24,6 +24,8 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("-t", "--timeout", type=float, default=15.0, metavar="SECS")
     p.add_argument("-d", "--debug", action="store_true")
     p.add_argument("--ts", action="store_true")
+    p.add_argument("--no-banner", action="store_true",
+                   help="suppress the startup banner (also: WADOSCOPE_NO_BANNER=1)")
     options = p.parse_args(argv)
     logger.init(timestamps=options.ts, debug=options.debug)
 
