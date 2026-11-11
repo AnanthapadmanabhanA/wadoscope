@@ -188,7 +188,7 @@ skips TLS verification.
 |------------|--------------------------|---------|
 | `discover` | path probe + fingerprint | find endpoints; ID server/cloud; flag unauth `/studies`; note known CVEs |
 | `query`    | QIDO-RS                  | enumerate studies / series / instances (PHI exposure) |
-| `retrieve` | WADO-RS                  | pull metadata (read-only) or a full study |
+| `retrieve` | WADO-RS                  | pull metadata (read-only), or a full study split into per-instance `.dcm` |
 | `store`    | STOW-RS                  | inject instances (write; `--unsafe` required) |
 | `cors`     | web-layer                | cross-origin PHI exposure via CORS misconfig |
 | `bola`     | web-layer                | per-object authz (IDOR on StudyInstanceUID) |
@@ -203,11 +203,11 @@ writes off production systems and makes read-only assessment the default.
 
 ## Status
 
-Alpha (0.2). Shipped: discover / query / retrieve / store, the web-layer checks
-cors, bola, **ssrf** (out-of-band) and **xss** (stored, in metadata), and
-server-fingerprint → known-advisory notes in `discover` (Orthanc, dcm4chee).
-Roadmap: WADO multipart → per-instance `.dcm` splitting, DICOMweb request
-fuzzing, expanding the advisory map, and a cloud-DICOMweb profile
+Alpha (0.2). Shipped: discover / query / **retrieve** (metadata, or a full study
+split into per-instance `.dcm`) / store, the web-layer checks cors, bola,
+**ssrf** (out-of-band) and **xss** (stored, in metadata), and server-fingerprint
+→ known-advisory notes in `discover` (Orthanc, dcm4chee). Roadmap: DICOMweb
+request fuzzing, expanding the advisory map, and a cloud-DICOMweb profile
 (Google/Azure/AWS auth + endpoint quirks).
 
 ## License

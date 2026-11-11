@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 
 import wadoscope.logger as logger
@@ -26,6 +27,8 @@ def main(argv: list[str] | None = None) -> None:
     r.add_argument("--mode", choices=["metadata", "study"], default="metadata",
                    help="metadata (JSON, read-only) or full study (saved to -o DIR)")
     r.add_argument("-o", "--output", metavar="DIR", default="./wadoscope_out")
+    r.add_argument("--no-split", action="store_true",
+                   help="save the raw multipart body instead of splitting into .dcm files")
     r.add_argument("--format", choices=["table", "csv", "json"], default="json")
 
     options = p.parse_args(argv)
@@ -48,8 +51,17 @@ def main(argv: list[str] | None = None) -> None:
                 report.emit(rows, fmt=options.format,
                             out_file=None if options.format != "json" else None)
             else:
-                dest = wado.retrieve_study(client, options.study, options.output)
-                logger.LOG.success(f"Study body saved: {dest}")  # type: ignore[attr-defined]
+                paths = wado.retrieve_study(client, options.study, options.output,
+                                            split=not options.no_split)
+                if len(paths) == 1 and paths[0].endswith(".multipart"):
+                    logger.LOG.warning(f"Saved raw multipart body: {paths[0]}")
+                else:
+                    logger.LOG.success(  # type: ignore[attr-defined]
+                        f"Saved {len(paths)} instance(s) to {options.output}/")
+                    for pth in paths[:10]:
+                        logger.LOG.info(f"  {os.path.basename(pth)}")
+                    if len(paths) > 10:
+                        logger.LOG.info(f"  ... and {len(paths) - 10} more")
         except Exception as exc:  # noqa: BLE001
             logger.LOG.error(f"Retrieve failed: {exc}")
             sys.exit(1)
