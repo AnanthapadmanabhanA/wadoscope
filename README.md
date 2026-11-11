@@ -186,7 +186,7 @@ skips TLS verification.
 
 | Command    | DICOMweb service / check | Purpose |
 |------------|--------------------------|---------|
-| `discover` | path probe + fingerprint | find endpoints; ID server/cloud; detect unauth `/studies` |
+| `discover` | path probe + fingerprint | find endpoints; ID server/cloud; flag unauth `/studies`; note known CVEs |
 | `query`    | QIDO-RS                  | enumerate studies / series / instances (PHI exposure) |
 | `retrieve` | WADO-RS                  | pull metadata (read-only) or a full study |
 | `store`    | STOW-RS                  | inject instances (write; `--unsafe` required) |
@@ -203,10 +203,11 @@ writes off production systems and makes read-only assessment the default.
 
 ## Status
 
-Alpha (0.2). Shipped: discover / query / retrieve / store, and the web-layer
-checks cors, bola, **ssrf** (out-of-band), and **xss** (stored, in metadata).
+Alpha (0.2). Shipped: discover / query / retrieve / store, the web-layer checks
+cors, bola, **ssrf** (out-of-band) and **xss** (stored, in metadata), and
+server-fingerprint → known-advisory notes in `discover` (Orthanc, dcm4chee).
 Roadmap: WADO multipart → per-instance `.dcm` splitting, DICOMweb request
-fuzzing, a server-fingerprint→CVE database, and a cloud-DICOMweb profile
+fuzzing, expanding the advisory map, and a cloud-DICOMweb profile
 (Google/Azure/AWS auth + endpoint quirks).
 
 ## License

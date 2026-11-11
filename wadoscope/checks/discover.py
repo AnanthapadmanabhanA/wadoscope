@@ -31,6 +31,34 @@ _SERVER_HINTS = [
 
 
 @dataclass
+class Advisory:
+    product: str
+    summary: str
+    url: str
+
+
+# Curated, verified advisories for the DICOM servers we fingerprint. These are
+# *known issues for the detected product*, not a confirmed finding — discover
+# can't read the exact running version, so always verify it. Pointed at a live
+# source; CVE IDs included only where verified.
+CVE_NOTES: dict[str, Advisory] = {
+    "orthanc": Advisory(
+        "Orthanc",
+        "CVE-2025-0896 — HTTP REST API reachable without authentication by "
+        "default (CWE-306, CVSS 9.8); image-parser RCE/DoS bugs in older builds.",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-0896",
+    ),
+    "dcm4che": Advisory(
+        "dcm4chee-arc-light",
+        "2025 advisories — unauthenticated study mass-deletion "
+        "(GHSA-v4gf-mj3c-fhgw) and JPEG/MP4/multipart parser DoS; "
+        "unauthenticated DICOM/HL7 access under review (CVEs pending).",
+        "https://github.com/dcm4che/dcm4chee-arc-light/security/advisories",
+    ),
+}
+
+
+@dataclass
 class EndpointFinding:
     base_url: str
     reachable: bool = False
@@ -50,6 +78,15 @@ def _fingerprint(url: str, server_header: str) -> str:
         if pat in low:
             return label
     return server_header or "unknown"
+
+
+def advisory_for(product: str) -> Optional[Advisory]:
+    """Return a known-CVE/advisory note for a fingerprinted product, or None."""
+    low = (product or "").lower()
+    for key, adv in CVE_NOTES.items():
+        if key in low:
+            return adv
+    return None
 
 
 def discover(root_url: str, verify_tls: bool = True,

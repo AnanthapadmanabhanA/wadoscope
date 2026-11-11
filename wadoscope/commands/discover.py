@@ -8,7 +8,7 @@ import sys
 
 import wadoscope.logger as logger
 from wadoscope import banner
-from wadoscope.checks.discover import discover
+from wadoscope.checks.discover import discover, advisory_for
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -48,6 +48,19 @@ def main(argv: list[str] | None = None) -> None:
                 logger.LOG.warning("  " + n)
         else:
             logger.LOG.info(line)
+
+    advisories = {}
+    for f in findings:
+        if f.reachable and f.product:
+            adv = advisory_for(f.product)
+            if adv:
+                advisories[adv.product] = adv
+    if advisories:
+        logger.LOG.info("Known advisories for detected software "
+                        "(leads — verify against the running version):")
+        for adv in advisories.values():
+            logger.LOG.warning(f"  [{adv.product}] {adv.summary}")
+            logger.LOG.info(f"    -> {adv.url}")
 
     if not any_hit:
         logger.LOG.warning("No DICOMweb endpoints responded.")
