@@ -10,6 +10,12 @@
   <code>discover · query · retrieve · store · cors · bola · ssrf · xss</code>
 </p>
 
+<p align="center">
+  <a href="https://github.com/AnanthapadmanabhanA/wadoscope/actions/workflows/tests.yml"><img src="https://github.com/AnanthapadmanabhanA/wadoscope/actions/workflows/tests.yml/badge.svg" alt="tests"></a>
+  <img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="python 3.10+">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
+</p>
+
 Hospitals increasingly expose imaging over **DICOMweb** - the HTTP/REST transport
 (QIDO-RS, WADO-RS, STOW-RS) - and the big cloud imaging services (Google Cloud
 Healthcare, Azure DICOM service, AWS HealthImaging) speak it natively. Classic
