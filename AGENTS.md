@@ -8,7 +8,7 @@ built on `httpx`. DIMSE is intentionally out of scope — defer to dicomrecon/nm
 - `wadoscope/checks/`  — web-layer checks: `discover`, `cors`, `bola`, `ssrf`, `xss`
 - `wadoscope/commands/`— one file per CLI subcommand; registered in `__main__.py`
 - `wadoscope/target.py`— `parse_web_target(url, ...) -> WebTarget` (base URL + auth + TLS)
-- `tests/`             — pytest; the pure builders/flatteners are unit-tested without a server
+- `tests/`             — pytest; pure builders/parsers unit-tested, plus `test_integration.py` which boots the mock lab in-process and drives the live client path
 
 ## Conventions (do not break)
 - **Commands never import httpx directly** — go through `wadoscope.web.*` or `wadoscope.checks.*`.
