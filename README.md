@@ -209,7 +209,7 @@ writes off production systems and makes read-only assessment the default.
 
 ## Status
 
-Alpha (0.2). Shipped: discover / query / **retrieve** (metadata, or a full study
+Alpha (0.3). Shipped: discover / query / **retrieve** (metadata, or a full study
 split into per-instance `.dcm`) / store, the web-layer checks cors, bola,
 **ssrf** (out-of-band) and **xss** (stored, in metadata), and server-fingerprint
 → known-advisory notes in `discover` (Orthanc, dcm4chee). Roadmap: DICOMweb

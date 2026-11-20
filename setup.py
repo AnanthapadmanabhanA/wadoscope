@@ -8,7 +8,7 @@ long_description = _readme.read_text(encoding="utf-8") if _readme.exists() else 
 
 setup(
     name="wadoscope",
-    version="0.2.0",
+    version="0.3.0",
     description="DICOMweb offensive toolkit — QIDO/WADO/STOW recon plus web-layer "
                 "checks (unauth, CORS, BOLA, SSRF, stored-XSS) for authorized "
                 "medical-imaging testing",
