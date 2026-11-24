@@ -46,12 +46,18 @@ def _usage() -> None:
     print("\nweb-layer checks:", file=sys.stderr)
     for name, (_, desc) in _CHECKS.items():
         print(f"  {name:<10} {desc}", file=sys.stderr)
-    print("\nRun 'python -m wadoscope <command> --help' for options.\n", file=sys.stderr)
+    print("\nRun 'python -m wadoscope <command> --help' for options.", file=sys.stderr)
+    print("Run 'python -m wadoscope --version' to print the version.\n", file=sys.stderr)
 
 
 def main() -> None:
     if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"):
         _usage()
+        sys.exit(0)
+
+    if sys.argv[1] in ("-V", "--version"):
+        from wadoscope.version import __version__
+        print(f"wadoscope {__version__}")
         sys.exit(0)
 
     cmd = sys.argv[1]
